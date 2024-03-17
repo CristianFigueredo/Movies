@@ -7,7 +7,7 @@ import truncate from 'lodash.truncate';
 type Props = {
   posterURL: string;
   title: string;
-  voteAverage: number;
+  rating: number;
   overview: string;
   onPress?: () => void;
   index: number;
@@ -16,7 +16,7 @@ type Props = {
 export const MovieCard: FunctionComponent<Props> = ({
   posterURL,
   title,
-  voteAverage,
+  rating,
   overview,
   onPress,
   index,
@@ -40,7 +40,7 @@ export const MovieCard: FunctionComponent<Props> = ({
         <Text style={$overview}>{overview?.slice(0, 90)}...</Text>
       </View>
 
-      <Text style={$voteAverageLabel}>{voteAverage.toFixed(1)}</Text>
+      <Text style={$voteAverageLabel}>{rating.toFixed(1)}</Text>
     </Card>
   );
 };

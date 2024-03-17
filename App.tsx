@@ -15,7 +15,7 @@ function App(): React.JSX.Element {
       <MovieCard
         posterURL="https://image.tmdb.org/t/p/original/8UlWHLMpgZm9bx6QYh0NFoq67TZ.jpg"
         title="The Tomorrow War"
-        voteAverage={7.4}
+        rating={7.4}
         overview="The world is stunned when a group of time travelers arrive from the year 2051 to deliver an urgent message: Thirty years in the future, mankind is losing a global war against a deadly alien species."
         index={0}
       />
