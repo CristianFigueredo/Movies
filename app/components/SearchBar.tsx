@@ -1,16 +1,20 @@
 import React, {FunctionComponent} from 'react';
-import {ViewStyle} from 'react-native';
+import {Pressable, ViewStyle} from 'react-native';
 import {TextField, Card, Spacings, Colors} from 'react-native-ui-lib';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
-import Spacer from './Spacer';
+import IonIcons from 'react-native-vector-icons/Ionicons';
 
 type Props = {
   onQueryChange?: (query: string) => void;
+  onFilterPress?: () => void;
 };
-export const SearchBar: FunctionComponent<Props> = ({onQueryChange}) => {
+export const SearchBar: FunctionComponent<Props> = ({
+  onQueryChange,
+  onFilterPress,
+}) => {
   return (
     <Card containerStyle={$container}>
-      <SimpleLineIcons style={$icon} name="magnifier" size={20} color="black" />
+      <SimpleLineIcons style={$icon} name="magnifier" size={18} color="black" />
       <TextField
         placeholderTextColor={Colors.$textNeutral}
         placeholder="Search"
@@ -18,6 +22,14 @@ export const SearchBar: FunctionComponent<Props> = ({onQueryChange}) => {
         onChangeText={onQueryChange}
         containerStyle={$textField}
       />
+      <Pressable onPress={onFilterPress}>
+        <IonIcons
+          style={$icon}
+          name="filter-outline"
+          size={18}
+          color={'black'}
+        />
+      </Pressable>
     </Card>
   );
 };
@@ -26,10 +38,12 @@ const $container: ViewStyle = {
   padding: Spacings.s4,
   marginBottom: Spacings.s2,
   flexDirection: 'row',
+  alignItems: 'center',
+  height: 50,
 };
 
 const $textField: ViewStyle = {
-  width: '100%',
+  width: '83%',
 };
 
 const $icon: ViewStyle = {
