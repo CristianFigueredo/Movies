@@ -13,7 +13,8 @@
     "lodash.truncate": "^4.4.2",
     "react": "18.2.0",
     "react-native": "0.73.6",
-    "react-native-fast-image": "^8.6.3"
+    "react-native-fast-image": "^8.6.3",
+    "react-native-ui-lib": "^7.18.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
