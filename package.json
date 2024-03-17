@@ -10,6 +10,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@gorhom/bottom-sheet": "^4",
     "lodash.truncate": "^4.4.2",
     "react": "18.2.0",
     "react-native": "0.73.6",
