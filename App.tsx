@@ -1,5 +1,7 @@
 import 'react-native-gesture-handler';
-import React, {useCallback, useMemo, useRef} from 'react';
+import {setupReactNativeUILibraryTheme} from './app/theme/setup';
+setupReactNativeUILibraryTheme();
+import React, {useCallback, useMemo, useRef, useState} from 'react';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {MovieCard} from './app/components/MovieCard';
 import {SearchBar} from './app/components/SearchBar';
@@ -13,8 +15,20 @@ import {
   BottomSheetBackdrop,
   BottomSheetBackdropProps,
 } from '@gorhom/bottom-sheet';
+import useSearch from './app/hooks/useSearch';
+import {OmdbFilter} from './app/services/omdb';
 
 function App(): React.JSX.Element {
+  const [query, setQuery] = useState('Avengers');
+  const [filter, setFilter] = useState<OmdbFilter>('all');
+  const [page, setPage] = useState(1);
+
+  const {searchResults} = useSearch({
+    query,
+    filter,
+    page,
+  });
+  console.log(JSON.stringify(searchResults, null, 2));
   // ref
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
@@ -45,7 +59,10 @@ function App(): React.JSX.Element {
     <GestureHandlerRootView style={$container}>
       <BottomSheetModalProvider>
         <Spacer height={Spacings.s5} />
-        <SearchBar onFilterPress={handlePresentModalPress} />
+        <SearchBar
+          onQueryChange={setQuery}
+          onFilterPress={handlePresentModalPress}
+        />
         <Spacer height={Spacings.s6} />
         <MovieCard
           posterURL="https://image.tmdb.org/t/p/original/8UlWHLMpgZm9bx6QYh0NFoq67TZ.jpg"
