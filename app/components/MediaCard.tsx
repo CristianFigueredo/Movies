@@ -3,6 +3,7 @@ import {ViewStyle, ImageStyle, TextStyle, StyleProp} from 'react-native';
 import {Card, Text, View, Spacings, Colors} from 'react-native-ui-lib';
 import FastImage from 'react-native-fast-image';
 import truncate from 'lodash.truncate';
+import {IMAGES} from '../../assets';
 
 type Props = {
   posterURL: string;
@@ -29,6 +30,7 @@ export const MediaCard: FunctionComponent<Props> = ({
           priority:
             index < 3 ? FastImage.priority.high : FastImage.priority.low,
         }}
+        defaultSource={IMAGES.GENERIC_IMAGE_PLACEHOLDER}
         placeholderContentFit="cover"
         // @ts-expect-error FastImage style prop is not typed correctly
         style={$posterImage}

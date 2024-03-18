@@ -28,14 +28,15 @@ import {DetailsResponse} from './app/services/omdb.types';
 import {FlashList} from '@shopify/flash-list';
 import {FullScreenLoader} from './app/components/FullScreenLoader';
 import {capitalize} from './app/utils/strings';
+import {EmptyStateFeedback} from './app/components/EmptyStateFeedback';
 
 function App(): React.JSX.Element {
-  const filterCandidate = useRef<OmdbFilter | null>(null);
+  const filterCandidate = useRef<OmdbFilter>(null);
 
   const search = useSearch();
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
-  const snapPoints = useMemo(() => ['35%'], []);
+  const snapPoints = useMemo(() => ['32%'], []);
 
   const handlePresentModalPress = useCallback(() => {
     Keyboard.dismiss();
@@ -83,6 +84,13 @@ function App(): React.JSX.Element {
               estimatedItemSize={200}
               onEndReachedThreshold={0.5}
               onEndReached={search.getNextPage}
+              keyboardDismissMode="on-drag"
+              ListEmptyComponent={
+                <EmptyStateFeedback
+                  imageID="not_found"
+                  message="No results found"
+                />
+              }
             />
             <BottomSheetModal
               ref={bottomSheetModalRef}

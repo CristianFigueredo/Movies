@@ -26,6 +26,9 @@ const useSearch = () => {
   const [page, setPage] = useState(1);
 
   const debouncedSetQuery = _debounce(text => {
+    if (text === query || text.length < 3) {
+      return;
+    }
     setQuery(text);
     getNewResults(text);
   }, 1000);
