@@ -21,7 +21,7 @@ export const SearchBar: FunctionComponent<Props> = ({
         placeholderTextColor={Colors.$textNeutral}
         placeholder="Search"
         hideUnderline
-        value={initialQuery}
+        defaultValue={initialQuery}
         onChangeText={onQueryChange}
         containerStyle={$textField}
       />
