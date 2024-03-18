@@ -1,0 +1,1 @@
+export const STANDARD_BORDER_RADIUS = 10;
