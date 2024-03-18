@@ -13,7 +13,7 @@ type Props = {
   index: number;
 };
 
-export const MovieCard: FunctionComponent<Props> = ({
+export const MediaCard: FunctionComponent<Props> = ({
   posterURL,
   title,
   rating,
