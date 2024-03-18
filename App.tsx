@@ -1,12 +1,19 @@
 import 'react-native-gesture-handler';
 import {setupReactNativeUILibraryTheme} from './app/theme/setup';
 setupReactNativeUILibraryTheme();
-import React, {useCallback, useMemo, useRef, useState} from 'react';
+import React, {useCallback, useMemo, useRef} from 'react';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
-import {MovieCard} from './app/components/MovieCard';
+import {MediaCard} from './app/components/MediaCard';
 import {SearchBar} from './app/components/SearchBar';
 import Spacer from './app/components/Spacer';
-import {Button, Checkbox, Colors, Spacings, Text} from 'react-native-ui-lib';
+import {
+  Button,
+  Colors,
+  RadioButton,
+  RadioGroup,
+  Spacings,
+  Text,
+} from 'react-native-ui-lib';
 import {Keyboard, ViewStyle} from 'react-native';
 import {
   BottomSheetModal,
@@ -21,22 +28,13 @@ import {DetailsResponse} from './app/services/omdb.types';
 import {FlashList} from '@shopify/flash-list';
 
 function App(): React.JSX.Element {
-  const [query, setQuery] = useState('Avengers');
-  const [filter, setFilter] = useState<OmdbFilter>('all');
-  const [page, setPage] = useState(1);
+  const filterCandidate = useRef<OmdbFilter | null>(null);
 
-  const {searchResults} = useSearch({
-    query,
-    filter,
-    page,
-  });
-  // ref
+  const search = useSearch();
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
-  // variables
   const snapPoints = useMemo(() => ['35%'], []);
 
-  // callbacks
   const handlePresentModalPress = useCallback(() => {
     Keyboard.dismiss();
     bottomSheetModalRef.current?.present();
@@ -59,16 +57,16 @@ function App(): React.JSX.Element {
       <BottomSheetModalProvider>
         <Spacer height={Spacings.s5} />
         <SearchBar
-          initialQuery={query}
-          onQueryChange={setQuery}
+          initialQuery="Avengers"
+          onQueryChange={search.setQuery}
           onFilterPress={handlePresentModalPress}
         />
         <Spacer height={Spacings.s3} />
         <FlashList<DetailsResponse>
-          data={searchResults.results}
-          contentContainerStyle={{paddingBottom: 100, paddingTop: 20}}
+          data={search.results}
+          contentContainerStyle={{paddingBottom: 0, paddingTop: 20}}
           renderItem={({item}) => (
-            <MovieCard
+            <MediaCard
               posterURL={item.Poster}
               title={item.Title}
               rating={parseFloat(item.imdbRating)}
@@ -77,7 +75,7 @@ function App(): React.JSX.Element {
             />
           )}
           estimatedItemSize={200}
-          onEndReached={() => setPage(previous => previous + 1)}
+          onEndReached={() => search.setPage(previous => previous + 1)}
         />
         <BottomSheetModal
           ref={bottomSheetModalRef}
@@ -90,14 +88,30 @@ function App(): React.JSX.Element {
           <BottomSheetView style={$bottomSheet}>
             <Text text60>Type of content</Text>
             <Spacer height={Spacings.s3} />
-            <Checkbox style={$checkbox} label="All" value={true} />
-            <Checkbox style={$checkbox} label="Movies" value={true} />
-            <Checkbox style={$checkbox} label="Series" value={false} />
-            <Checkbox style={$checkbox} label="Episodes" value={false} />
+            <RadioGroup
+              initialValue={search.filter}
+              onValueChange={(value: OmdbFilter) => {
+                filterCandidate.current = value;
+              }}>
+              {FILTERS.map(option => (
+                <RadioButton
+                  key={option}
+                  label={option}
+                  value={option}
+                  style={$checkbox}
+                />
+              ))}
+            </RadioGroup>
             <Spacer height={Spacings.s4} />
             <Button
               label="Apply"
-              onPress={() => bottomSheetModalRef.current?.dismiss()}
+              onPress={() => {
+                if (filterCandidate.current) {
+                  search.setFilter(filterCandidate.current);
+                  filterCandidate.current = null;
+                }
+                bottomSheetModalRef.current?.dismiss();
+              }}
             />
           </BottomSheetView>
         </BottomSheetModal>
@@ -105,6 +119,8 @@ function App(): React.JSX.Element {
     </GestureHandlerRootView>
   );
 }
+
+const FILTERS: OmdbFilter[] = ['all', 'movie', 'series', 'episode'];
 
 const $container: ViewStyle = {
   flex: 1,

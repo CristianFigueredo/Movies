@@ -1,6 +1,7 @@
 import {useEffect, useState} from 'react';
 import OmdbApiManager, {OmdbFilter} from '../services/omdb';
 import {DetailsResponse} from '../services/omdb.types';
+import _debounce from 'lodash.debounce';
 
 interface SearchResults {
   totalResults: number;
@@ -13,21 +14,20 @@ type Parameters = {
   page: number;
 };
 
-const useSearch = ({
-  query,
-  filter,
-  page,
-}: Parameters): {
-  searchResults: SearchResults;
-  loading: boolean;
-  error: boolean;
-} => {
+const useSearch = () => {
   const [searchResults, setSearchResults] = useState<SearchResults>({
     totalResults: 0,
     results: [],
   });
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<boolean>(false);
+  const [query, setQuery] = useState('Avengers');
+  const [filter, setFilter] = useState<OmdbFilter>('all');
+  const [page, setPage] = useState(1);
+
+  const debouncedSetQuery = _debounce(text => {
+    setQuery(text);
+  }, 800);
 
   const fetchSearchResults = async (params: Parameters) => {
     setLoading(true);
@@ -45,7 +45,9 @@ const useSearch = ({
       );
       setSearchResults(previous => ({
         totalResults: Number(searchResponse.totalResults),
-        results: Array.from(new Set([...previous.results, ...response])),
+        results: Array.from(
+          new Set([...previous.results, ...response.filter(isValidResult)]),
+        ),
       }));
     } catch {
       setError(true);
@@ -58,7 +60,29 @@ const useSearch = ({
     fetchSearchResults({query, filter, page});
   }, [query, filter, page]);
 
-  return {searchResults, loading, error};
+  useEffect(() => {
+    setSearchResults({totalResults: 0, results: []});
+    setPage(1);
+    setLoading(true);
+  }, [query, filter]);
+
+  return {
+    results: searchResults.results,
+    loading,
+    error,
+    filter,
+    setQuery: debouncedSetQuery,
+    setFilter,
+    setPage,
+  };
+};
+
+const isValidResult = (result: DetailsResponse) => {
+  return (
+    result.Poster !== 'N/A' &&
+    result.imdbRating !== 'N/A' &&
+    result.Plot !== 'N/A'
+  );
 };
 
 export default useSearch;
