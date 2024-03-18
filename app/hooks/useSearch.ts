@@ -1,18 +1,15 @@
 import {useEffect, useState} from 'react';
-import OmdbApiManager, {MovieType} from '../services/omdb';
-
-interface Movie {
-  // Define your movie interface
-}
+import OmdbApiManager, {OmdbFilter} from '../services/omdb';
+import {DetailsResponse} from '../services/omdb.types';
 
 interface SearchResults {
   totalResults: number;
-  movies: Movie[];
+  results: DetailsResponse[];
 }
 
 type Parameters = {
   query: string;
-  filter: MovieType;
+  filter: OmdbFilter;
   page: number;
 };
 
@@ -27,7 +24,7 @@ const useSearch = ({
 } => {
   const [searchResults, setSearchResults] = useState<SearchResults>({
     totalResults: 0,
-    movies: [],
+    results: [],
   });
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<boolean>(false);
@@ -37,18 +34,19 @@ const useSearch = ({
     setError(false);
 
     try {
-      const response = await OmdbApiManager.search(
+      const searchResponse = await OmdbApiManager.search(
         params.query,
         params.filter,
         params.page,
       );
-      console.log({
-        response,
-      });
-      setSearchResults({
-        totalResults: response.totalResults,
-        movies: response.Search,
-      });
+
+      const response = await OmdbApiManager.getByIDs(
+        searchResponse.Search.map(item => item.imdbID),
+      );
+      setSearchResults(previous => ({
+        totalResults: Number(searchResponse.totalResults),
+        results: Array.from(new Set([...previous.results, ...response])),
+      }));
     } catch {
       setError(true);
     }
