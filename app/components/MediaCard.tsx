@@ -25,7 +25,7 @@ export const MediaCard: FunctionComponent<Props> = ({
     <Card onPress={onPress} key={1} style={$container}>
       <FastImage
         source={{
-          uri: posterURL.replace('original', 'w342'),
+          uri: posterURL,
           priority:
             index < 3 ? FastImage.priority.high : FastImage.priority.low,
         }}
