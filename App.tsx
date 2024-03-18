@@ -17,6 +17,8 @@ import {
 } from '@gorhom/bottom-sheet';
 import useSearch from './app/hooks/useSearch';
 import {OmdbFilter} from './app/services/omdb';
+import {DetailsResponse} from './app/services/omdb.types';
+import {FlashList} from '@shopify/flash-list';
 
 function App(): React.JSX.Element {
   const [query, setQuery] = useState('Avengers');
@@ -28,7 +30,6 @@ function App(): React.JSX.Element {
     filter,
     page,
   });
-  console.log(JSON.stringify(searchResults, null, 2));
   // ref
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
@@ -40,9 +41,7 @@ function App(): React.JSX.Element {
     Keyboard.dismiss();
     bottomSheetModalRef.current?.present();
   }, []);
-  const handleSheetChanges = useCallback((index: number) => {
-    console.log('handleSheetChanges', index);
-  }, []);
+
   const renderBackdrop = useCallback(
     (props: BottomSheetBackdropProps) => (
       <BottomSheetBackdrop
@@ -60,16 +59,25 @@ function App(): React.JSX.Element {
       <BottomSheetModalProvider>
         <Spacer height={Spacings.s5} />
         <SearchBar
+          initialQuery={query}
           onQueryChange={setQuery}
           onFilterPress={handlePresentModalPress}
         />
-        <Spacer height={Spacings.s6} />
-        <MovieCard
-          posterURL="https://image.tmdb.org/t/p/original/8UlWHLMpgZm9bx6QYh0NFoq67TZ.jpg"
-          title="The Tomorrow War"
-          rating={7.4}
-          overview="The world is stunned when a group of time travelers arrive from the year 2051 to deliver an urgent message: Thirty years in the future, mankind is losing a global war against a deadly alien species."
-          index={0}
+        <Spacer height={Spacings.s3} />
+        <FlashList<DetailsResponse>
+          data={searchResults.results}
+          contentContainerStyle={{paddingBottom: 100, paddingTop: 20}}
+          renderItem={({item}) => (
+            <MovieCard
+              posterURL={item.Poster}
+              title={item.Title}
+              rating={parseFloat(item.imdbRating)}
+              overview={item.Plot}
+              index={0}
+            />
+          )}
+          estimatedItemSize={200}
+          onEndReached={() => setPage(previous => previous + 1)}
         />
         <BottomSheetModal
           ref={bottomSheetModalRef}
@@ -78,8 +86,7 @@ function App(): React.JSX.Element {
           backdropComponent={renderBackdrop}
           detached={true}
           style={$sheetContainer}
-          snapPoints={snapPoints}
-          onChange={handleSheetChanges}>
+          snapPoints={snapPoints}>
           <BottomSheetView style={$bottomSheet}>
             <Text text60>Type of content</Text>
             <Spacer height={Spacings.s3} />
