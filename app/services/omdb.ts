@@ -8,7 +8,7 @@ class OmdbApiManager {
   private httpClient: IHttpClient;
   private baseURL = 'http://www.omdbapi.com';
   // TODO: this key should be stored in a secure place and provided by the user
-  private apiKey = '3ff01e53';
+  private apiKey = 'bfd8ec50'; //'3ff01e53';
 
   constructor() {
     this.httpClient = DIContainer.getHttpClient();
