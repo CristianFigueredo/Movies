@@ -2,6 +2,7 @@ import {useEffect, useState} from 'react';
 import OmdbApiManager, {OmdbFilter} from '../services/omdb';
 import {DetailsResponse} from '../services/omdb.types';
 import _debounce from 'lodash.debounce';
+import {Alert} from 'react-native';
 
 interface SearchResults {
   totalResults: number;
@@ -20,19 +21,16 @@ const useSearch = () => {
     results: [],
   });
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<boolean>(false);
   const [query, setQuery] = useState('Avengers');
   const [filter, setFilter] = useState<OmdbFilter>('all');
   const [page, setPage] = useState(1);
 
   const debouncedSetQuery = _debounce(text => {
     setQuery(text);
-  }, 800);
+    getNewResults(text);
+  }, 1000);
 
   const fetchSearchResults = async (params: Parameters) => {
-    setLoading(true);
-    setError(false);
-
     try {
       const searchResponse = await OmdbApiManager.search(
         params.query,
@@ -41,7 +39,7 @@ const useSearch = () => {
       );
 
       const response = await OmdbApiManager.getByIDs(
-        searchResponse.Search.map(item => item.imdbID),
+        searchResponse.Search?.map(item => item.imdbID) || [],
       );
       setSearchResults(previous => ({
         totalResults: Number(searchResponse.totalResults),
@@ -49,31 +47,45 @@ const useSearch = () => {
           new Set([...previous.results, ...response.filter(isValidResult)]),
         ),
       }));
-    } catch {
-      setError(true);
-    }
 
-    setLoading(false);
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      Alert.alert(
+        'Error',
+        'Please check your internet connection or use a different ApiKey (because of the rate limits)',
+      );
+    }
   };
 
   useEffect(() => {
+    setLoading(true);
     fetchSearchResults({query, filter, page});
-  }, [query, filter, page]);
+  }, []);
 
-  useEffect(() => {
+  const getNextPage = () => {
+    setPage(page + 1);
+    fetchSearchResults({query, filter, page: page + 1});
+  };
+  const getNewResults = (lastQuery?: string, lastFilter?: OmdbFilter) => {
     setSearchResults({totalResults: 0, results: []});
     setPage(1);
     setLoading(true);
-  }, [query, filter]);
+    fetchSearchResults({
+      query: lastQuery || query,
+      filter: lastFilter || filter,
+      page: 1,
+    });
+  };
 
   return {
     results: searchResults.results,
     loading,
-    error,
     filter,
     setQuery: debouncedSetQuery,
     setFilter,
-    setPage,
+    getNextPage,
+    getNewResults,
   };
 };
 
