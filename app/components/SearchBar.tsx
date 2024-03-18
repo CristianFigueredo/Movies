@@ -7,10 +7,12 @@ import IonIcons from 'react-native-vector-icons/Ionicons';
 type Props = {
   onQueryChange?: (query: string) => void;
   onFilterPress?: () => void;
+  initialQuery?: string;
 };
 export const SearchBar: FunctionComponent<Props> = ({
   onQueryChange,
   onFilterPress,
+  initialQuery,
 }) => {
   return (
     <Card containerStyle={$container}>
@@ -19,6 +21,7 @@ export const SearchBar: FunctionComponent<Props> = ({
         placeholderTextColor={Colors.$textNeutral}
         placeholder="Search"
         hideUnderline
+        value={initialQuery}
         onChangeText={onQueryChange}
         containerStyle={$textField}
       />
