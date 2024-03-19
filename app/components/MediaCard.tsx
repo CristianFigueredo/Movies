@@ -1,18 +1,18 @@
-import React, {FunctionComponent} from 'react';
-import {ViewStyle, ImageStyle, TextStyle, StyleProp} from 'react-native';
-import {Card, Text, View, Spacings, Colors} from 'react-native-ui-lib';
-import FastImage from 'react-native-fast-image';
-import truncate from 'lodash.truncate';
-import {IMAGES} from '../../assets';
+import React, { FunctionComponent } from 'react'
+import { ViewStyle, ImageStyle, TextStyle, StyleProp } from 'react-native'
+import { Card, Text, View, Spacings, Colors } from 'react-native-ui-lib'
+import FastImage from 'react-native-fast-image'
+import truncate from 'lodash.truncate'
+import { IMAGES } from '../../assets'
 
 type Props = {
-  posterURL: string;
-  title: string;
-  rating: number;
-  overview: string;
-  onPress?: () => void;
-  index: number;
-};
+  posterURL: string
+  title: string
+  rating: number
+  overview: string
+  onPress?: () => void
+  index: number
+}
 
 export const MediaCard: FunctionComponent<Props> = ({
   posterURL,
@@ -27,8 +27,7 @@ export const MediaCard: FunctionComponent<Props> = ({
       <FastImage
         source={{
           uri: posterURL,
-          priority:
-            index < 3 ? FastImage.priority.high : FastImage.priority.low,
+          priority: index < 3 ? FastImage.priority.high : FastImage.priority.low,
         }}
         defaultSource={IMAGES.GENERIC_IMAGE_PLACEHOLDER}
         placeholderContentFit="cover"
@@ -37,7 +36,7 @@ export const MediaCard: FunctionComponent<Props> = ({
       />
       <View style={$middleContainer}>
         <Text style={$titleLabel} text50M>
-          {truncate(title, {length: 25})}
+          {truncate(title, { length: 25 })}
         </Text>
         <Text style={$overview}>{overview?.slice(0, 90)}...</Text>
       </View>

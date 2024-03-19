@@ -1,14 +1,14 @@
-import React, {FunctionComponent} from 'react';
-import {Pressable, ViewStyle} from 'react-native';
-import {TextField, Card, Spacings, Colors} from 'react-native-ui-lib';
-import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
-import IonIcons from 'react-native-vector-icons/Ionicons';
+import React, { FunctionComponent } from 'react'
+import { Pressable, ViewStyle } from 'react-native'
+import { TextField, Card, Spacings, Colors } from 'react-native-ui-lib'
+import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons'
+import IonIcons from 'react-native-vector-icons/Ionicons'
 
 type Props = {
-  onQueryChange?: (query: string) => void;
-  onFilterPress?: () => void;
-  initialQuery?: string;
-};
+  onQueryChange?: (query: string) => void
+  onFilterPress?: () => void
+  initialQuery?: string
+}
 export const SearchBar: FunctionComponent<Props> = ({
   onQueryChange,
   onFilterPress,
@@ -26,12 +26,7 @@ export const SearchBar: FunctionComponent<Props> = ({
         containerStyle={$textField}
       />
       <Pressable onPress={onFilterPress}>
-        <IonIcons
-          style={$icon}
-          name="filter-outline"
-          size={18}
-          color={'black'}
-        />
+        <IonIcons style={$icon} name="filter-outline" size={18} color={'black'} />
       </Pressable>
     </Card>
   );

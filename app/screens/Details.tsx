@@ -1,4 +1,4 @@
-import React, {FunctionComponent, Fragment, PropsWithChildren} from 'react';
+import React, { FunctionComponent, Fragment, PropsWithChildren } from 'react'
 import {
   ViewStyle,
   ImageStyle,
@@ -8,20 +8,20 @@ import {
   Linking,
   FlatList,
   ScrollView,
-} from 'react-native';
-import {AppStackScreenProps} from '../navigators/AppNavigator';
-import Icon from 'react-native-vector-icons/Octicons';
-import {Text, Colors, Spacings, Chip, View} from 'react-native-ui-lib';
-import {useNavigation, useRoute} from '@react-navigation/native';
-import {IMAGES} from '../../assets';
-import truncate from 'lodash.truncate';
-import {MediaResponse} from '../services/omdb.types';
+} from 'react-native'
+import { AppStackScreenProps } from '../navigators/AppNavigator'
+import Icon from 'react-native-vector-icons/Octicons'
+import { Text, Colors, Spacings, Chip, View } from 'react-native-ui-lib'
+import { useNavigation, useRoute } from '@react-navigation/native'
+import { IMAGES } from '../../assets'
+import truncate from 'lodash.truncate'
+import { MediaResponse } from '../services/omdb.types'
 
 interface Props extends AppStackScreenProps<'Details'> {}
 
 export const DetailsScreen: FunctionComponent<Props> = function () {
   const route = useRoute();
-  const {media} = route.params as {media: MediaResponse};
+  const { media } = route.params as { media: MediaResponse };
   const navigation = useNavigation();
 
   if (!media) {
@@ -36,11 +36,9 @@ export const DetailsScreen: FunctionComponent<Props> = function () {
         source={{
           uri: media.Poster,
         }}
-        blurRadius={3}>
-        <IconWrapper
-          onPress={navigation.goBack}
-          size="small"
-          style={$closeIconWrapper}>
+        blurRadius={3}
+      >
+        <IconWrapper onPress={navigation.goBack} size="small" style={$closeIconWrapper}>
           <Icon size={25} color="white" name="x" />
         </IconWrapper>
         <IconWrapper size="small" onPress={() => showTrailers(media.Title)}>
@@ -62,13 +60,7 @@ export const DetailsScreen: FunctionComponent<Props> = function () {
             </Text>
             <View style={$genres}>
               {media.Genre.split(', ').map((genre, index) => (
-                <Chip
-                  size={20}
-                  marginB-s1
-                  marginR-s2
-                  key={genre + index}
-                  label={genre}
-                />
+                <Chip size={20} marginB-s1 marginR-s2 key={genre + index} label={genre} />
               ))}
               <Chip marginR-s2 size={20} marginB-s1 label={media.imdbRating} />
               <Chip marginR-s2 size={20} marginB-s1 label={media.Year} />
@@ -89,15 +81,15 @@ export const DetailsScreen: FunctionComponent<Props> = function () {
               Cast
             </Text>
             <FlatList
-              data={media.Actors.split(', ').map(name => name)}
+              data={media.Actors.split(', ').map((name) => name)}
               horizontal
               contentContainerStyle={$casts}
               keyExtractor={(item, index) => item + index}
-              renderItem={({item: actorName}) => (
+              renderItem={({ item: actorName }) => (
                 <View marginR-s6>
                   <View style={$castPicture} />
                   <Text style={$castName} marginT-s1>
-                    {truncate(actorName, {length: 13})}
+                    {truncate(actorName, { length: 13 })}
                   </Text>
                 </View>
               )}
@@ -128,22 +120,20 @@ const iconWrapperSizes: Record<string, ViewStyle> = {
   },
 };
 
-type IconWrapperSize = keyof typeof iconWrapperSizes;
+type IconWrapperSize = keyof typeof iconWrapperSizes
 
 type IconWrapperProps = PropsWithChildren<{
-  size?: IconWrapperSize;
-  style?: ViewStyle;
-  onPress?: () => void;
-}>;
+  size?: IconWrapperSize
+  style?: ViewStyle
+  onPress?: () => void
+}>
 const IconWrapper: FunctionComponent<IconWrapperProps> = ({
   children,
   size = 'big',
   style,
   onPress,
 }) => (
-  <View
-    onTouchEnd={onPress}
-    style={[$iconWrapper, iconWrapperSizes[size], style]}>
+  <View onTouchEnd={onPress} style={[$iconWrapper, iconWrapperSizes[size], style]}>
     {children}
   </View>
 );
@@ -215,4 +205,4 @@ const $closeIconWrapper: ViewStyle = {
   left: 20,
   zIndex: 2,
 };
-const $casts: ViewStyle = {width: '100%'};
+const $casts: ViewStyle = { width: '100%' };

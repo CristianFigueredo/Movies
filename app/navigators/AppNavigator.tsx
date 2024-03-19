@@ -1,11 +1,8 @@
-import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
-import {
-  createNativeStackNavigator,
-  NativeStackScreenProps,
-} from '@react-navigation/native-stack';
-import React from 'react';
-import {SearchScreen} from '../screens/Search';
-import {DetailsScreen} from '../screens/Details';
+import { DefaultTheme, NavigationContainer } from '@react-navigation/native'
+import { createNativeStackNavigator, NativeStackScreenProps } from '@react-navigation/native-stack'
+import React from 'react'
+import { SearchScreen } from '../screens/Search'
+import { DetailsScreen } from '../screens/Details'
 
 /**
  * This type allows TypeScript to know what routes are defined in this navigator
@@ -21,17 +18,19 @@ import {DetailsScreen} from '../screens/Details';
  *   https://reactnavigation.org/docs/typescript/#organizing-types
  */
 export type AppStackParamList = {
-  Search: undefined;
-  Details: undefined;
-};
+  Search: undefined
+  Details: undefined
+}
 
 /**
  * This is a list of all the route names that will exit the app if the back button
  * is pressed while in that screen. Only affects Android.
  */
 
-export type AppStackScreenProps<T extends keyof AppStackParamList> =
-  NativeStackScreenProps<AppStackParamList, T>;
+export type AppStackScreenProps<T extends keyof AppStackParamList> = NativeStackScreenProps<
+  AppStackParamList,
+  T
+>
 
 // Documentation: https://reactnavigation.org/docs/stack-navigator/
 const Stack = createNativeStackNavigator<AppStackParamList>();
@@ -44,13 +43,9 @@ const CustomTheme = {
 };
 const AppStack = function AppStack() {
   return (
-    <Stack.Navigator screenOptions={{headerShown: false}}>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Search" component={SearchScreen} />
-      <Stack.Screen
-        options={{presentation: 'modal'}}
-        name="Details"
-        component={DetailsScreen}
-      />
+      <Stack.Screen options={{ presentation: 'modal' }} name="Details" component={DetailsScreen} />
     </Stack.Navigator>
   );
 };

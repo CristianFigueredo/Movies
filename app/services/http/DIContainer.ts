@@ -1,5 +1,5 @@
-import {FetchHttpClient} from './FetchHttpClient';
-import {IHttpClient} from './IHttpClient';
+import { FetchHttpClient } from './FetchHttpClient'
+import { IHttpClient } from './IHttpClient'
 
 export class DIContainer {
   private static httpClient: IHttpClient;

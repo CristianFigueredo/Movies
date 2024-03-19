@@ -1,7 +1,7 @@
-import React from 'react';
-import {View, ViewStyle} from 'react-native';
-import {Bounce} from 'react-native-animated-spinkit';
-import {Colors} from 'react-native-ui-lib';
+import React from 'react'
+import { View, ViewStyle } from 'react-native'
+import { Bounce } from 'react-native-animated-spinkit'
+import { Colors } from 'react-native-ui-lib'
 
 export const FullScreenLoader = () => {
   return (

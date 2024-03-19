@@ -1,17 +1,17 @@
-import React, {FunctionComponent} from 'react';
-import {View, Text, ViewStyle, Dimensions, ImageStyle} from 'react-native';
-import Image from 'react-native-fast-image';
-import {IMAGES} from '../../assets';
-import {Spacings, Button} from 'react-native-ui-lib';
+import React, { FunctionComponent } from 'react'
+import { View, Text, ViewStyle, Dimensions, ImageStyle } from 'react-native'
+import Image from 'react-native-fast-image'
+import { IMAGES } from '../../assets'
+import { Spacings, Button } from 'react-native-ui-lib'
 
 type Props = {
-  imageID?: ImageID;
-  message?: string;
+  imageID?: ImageID
+  message?: string
   button?: {
-    onPress: () => void;
-    label: string;
-  };
-};
+    onPress: () => void
+    label: string
+  }
+}
 
 export const EmptyStateFeedback: FunctionComponent<Props> = ({
   imageID = 'empty',
@@ -23,9 +23,7 @@ export const EmptyStateFeedback: FunctionComponent<Props> = ({
       {/* @ts-expect-error wrongly typed style prop */}
       <Image style={$image} source={images[imageID]} />
       <Text>{message}</Text>
-      {button && (
-        <Button style={$button} label={button.label} onPress={button.onPress} />
-      )}
+      {button && <Button style={$button} label={button.label} onPress={button.onPress} />}
     </View>
   );
 };
@@ -35,11 +33,11 @@ const images = {
   not_found: IMAGES.NOT_FOUND,
 } as const;
 
-type ImageID = keyof typeof images;
+type ImageID = keyof typeof images
 
-const defaultMessage = 'Nothing to show for now :)';
+const defaultMessage = 'Nothing to show for now :)'
 
-const {height} = Dimensions.get('window');
+const { height } = Dimensions.get('window');
 
 const $root: ViewStyle = {
   height: height * 0.6,

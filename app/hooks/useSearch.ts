@@ -1,15 +1,15 @@
-import {useEffect, useState} from 'react';
-import OmdbService from '../services/omdb';
-import {MediaResponse, OmdbFilter} from '../services/omdb.types';
-import _debounce from 'lodash.debounce';
-import {Alert} from 'react-native';
+import { useEffect, useState } from 'react'
+import OmdbService from '../services/omdb'
+import { MediaResponse, OmdbFilter } from '../services/omdb.types'
+import _debounce from 'lodash.debounce'
+import { Alert } from 'react-native'
 
 type Parameters = {
-  query: string;
-  filter: OmdbFilter;
-  page: number;
-  yearFilter?: number;
-};
+  query: string
+  filter: OmdbFilter
+  page: number
+  yearFilter?: number
+}
 
 /*
  * This hook is responsible for handling the search logic and the state of the search screen.
@@ -22,7 +22,7 @@ const useSearch = () => {
   const [yearFilter, setYearFilter] = useState(1900);
   const [page, setPage] = useState(1);
 
-  const debouncedSetQuery = _debounce(text => {
+  const debouncedSetQuery = _debounce((text) => {
     if (text === query || text.length < 3) {
       return;
     }
@@ -34,12 +34,10 @@ const useSearch = () => {
     try {
       const searchResponse = await OmdbService.search(params);
       const response = await OmdbService.getByID(
-        searchResponse.Search?.map(item => item.imdbID) || [],
+        searchResponse.Search?.map((item) => item.imdbID) || [],
       );
 
-      setResults(previous =>
-        Array.from(new Set([...previous, ...response.filter(isValidMedia)])),
-      );
+      setResults((previous) => Array.from(new Set([...previous, ...response.filter(isValidMedia)])));
 
       setLoading(false);
     } catch (error) {
@@ -52,18 +50,14 @@ const useSearch = () => {
 
   useEffect(() => {
     setLoading(true);
-    search({query, filter, page, yearFilter});
+    search({ query, filter, page, yearFilter });
   }, []);
 
   const getNextPage = () => {
     setPage(page + 1);
-    search({query, filter, page: page + 1, yearFilter});
+    search({ query, filter, page: page + 1, yearFilter });
   };
-  const getNewResults = (
-    lastQuery?: string,
-    lastFilter?: OmdbFilter,
-    lastYearFilter?: number,
-  ) => {
+  const getNewResults = (lastQuery?: string, lastFilter?: OmdbFilter, lastYearFilter?: number) => {
     setResults([]);
     setPage(1);
     setLoading(true);
@@ -89,11 +83,7 @@ const useSearch = () => {
 };
 
 const isValidMedia = (result: MediaResponse) => {
-  return (
-    result.Poster !== 'N/A' &&
-    result.imdbRating !== 'N/A' &&
-    result.Plot !== 'N/A'
-  );
+  return result.Poster !== 'N/A' && result.imdbRating !== 'N/A' && result.Plot !== 'N/A'
 };
 
 export default useSearch;

@@ -1,18 +1,18 @@
-import React, {Fragment, useCallback, useRef} from 'react';
-import {MediaCard} from '../components/MediaCard';
-import {SearchBar} from '../components/SearchBar';
-import Spacer from '../components/Spacer';
-import {Colors, Spacings, View} from 'react-native-ui-lib';
-import {Keyboard, ViewStyle} from 'react-native';
-import {BottomSheetModal} from '@gorhom/bottom-sheet';
-import useSearch from '../hooks/useSearch';
-import {MediaResponse, OmdbFilter} from '../services/omdb.types';
-import {FlashList} from '@shopify/flash-list';
-import {FullScreenLoader} from '../components/FullScreenLoader';
-import {EmptyStateFeedback} from '../components/EmptyStateFeedback';
-import {useNavigation} from '@react-navigation/native';
-import {FiltersBottomSheet} from '../components/FiltersBottomSheet';
-import Await from '../components/Await';
+import React, { useCallback, useRef } from 'react'
+import { MediaCard } from '../components/MediaCard'
+import { SearchBar } from '../components/SearchBar'
+import Spacer from '../components/Spacer'
+import { Colors, Spacings, View } from 'react-native-ui-lib'
+import { Keyboard, ViewStyle } from 'react-native'
+import { BottomSheetModal } from '@gorhom/bottom-sheet'
+import useSearch from '../hooks/useSearch'
+import { MediaResponse, OmdbFilter } from '../services/omdb.types'
+import { FlashList } from '@shopify/flash-list'
+import { FullScreenLoader } from '../components/FullScreenLoader'
+import { EmptyStateFeedback } from '../components/EmptyStateFeedback'
+import { useNavigation } from '@react-navigation/native'
+import { FiltersBottomSheet } from '../components/FiltersBottomSheet'
+import Await from '../components/Await'
 
 export function SearchScreen(): React.JSX.Element {
   const search = useSearch();
@@ -24,17 +24,14 @@ export function SearchScreen(): React.JSX.Element {
     filtersModalRef.current?.present();
   }, []);
 
-  const handleFilterChange = useCallback(
-    (yearFilter: number, filter: OmdbFilter) => {
-      search.setYearFilter(yearFilter);
-      if (filter) {
-        search.setFilter(filter);
-      }
-      search.getNewResults(undefined, filter || undefined, yearFilter);
-      filtersModalRef.current?.dismiss();
-    },
-    [],
-  );
+  const handleFilterChange = useCallback((yearFilter: number, filter: OmdbFilter) => {
+    search.setYearFilter(yearFilter);
+    if (filter) {
+      search.setFilter(filter);
+    }
+    search.getNewResults(undefined, filter || undefined, yearFilter);
+    filtersModalRef.current?.dismiss();
+  }, []);
 
   return (
     <View style={$container}>
@@ -46,12 +43,13 @@ export function SearchScreen(): React.JSX.Element {
       />
       <Await
         for={!search.loading && !(search.results.length === 0)}
-        fallback={<FullScreenLoader />}>
+        fallback={<FullScreenLoader />}
+      >
         <Spacer height={Spacings.s3} />
         <FlashList<MediaResponse>
           data={search.results}
           contentContainerStyle={$mediaList}
-          renderItem={({item, index}) => (
+          renderItem={({ item, index }) => (
             <MediaCard
               posterURL={item.Poster}
               title={item.Title}
@@ -61,7 +59,7 @@ export function SearchScreen(): React.JSX.Element {
               onPress={() => {
                 // TODO: fix types
                 // @ts-ignore
-                navigation.navigate('Details', {media: item});
+                navigation.navigate('Details', { media: item });
               }}
             />
           )}
@@ -69,12 +67,7 @@ export function SearchScreen(): React.JSX.Element {
           onEndReachedThreshold={0.5}
           onEndReached={search.getNextPage}
           keyboardDismissMode="on-drag"
-          ListEmptyComponent={
-            <EmptyStateFeedback
-              imageID="not_found"
-              message="No results found"
-            />
-          }
+          ListEmptyComponent={<EmptyStateFeedback imageID="not_found" message="No results found" />}
         />
         <FiltersBottomSheet
           ref={filtersModalRef}
@@ -93,4 +86,4 @@ const $container: ViewStyle = {
   backgroundColor: Colors.$backgroundNeutral,
 };
 
-const $mediaList: ViewStyle = {paddingBottom: 0, paddingTop: 20};
+const $mediaList: ViewStyle = { paddingBottom: 0, paddingTop: 20 };

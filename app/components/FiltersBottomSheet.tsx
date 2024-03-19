@@ -1,44 +1,31 @@
-import React, {
-  useMemo,
-  useRef,
-  useState,
-  useImperativeHandle,
-  forwardRef,
-} from 'react';
-import Spacer from '../components/Spacer';
-import {
-  Button,
-  RadioButton,
-  RadioGroup,
-  Slider,
-  Spacings,
-  Text,
-} from 'react-native-ui-lib';
-import {ViewStyle} from 'react-native';
+import React, { useMemo, useRef, useState, useImperativeHandle, forwardRef } from 'react'
+import Spacer from '../components/Spacer'
+import { Button, RadioButton, RadioGroup, Slider, Spacings, Text } from 'react-native-ui-lib'
+import { ViewStyle } from 'react-native'
 import {
   BottomSheetModal,
   BottomSheetView,
   BottomSheetBackdrop,
   BottomSheetBackdropProps,
-} from '@gorhom/bottom-sheet';
-import {OmdbFilter} from '../services/omdb.types';
-import {capitalize} from '../utils/strings';
+} from '@gorhom/bottom-sheet'
+import { OmdbFilter } from '../services/omdb.types'
+import { capitalize } from '../utils/strings'
 
 type Props = {
-  yearFilter: number;
-  filter: OmdbFilter;
-  onApplyPress: (yearFilter: number, filterCandidate: OmdbFilter) => void;
-};
+  yearFilter: number
+  filter: OmdbFilter
+  onApplyPress: (yearFilter: number, filterCandidate: OmdbFilter) => void
+}
 
 type FilterBottomSheetHandle = {
-  dismiss: () => void;
-  present: () => void;
-};
+  dismiss: () => void
+  present: () => void
+}
 
 const noop = () => {};
 
 export const FiltersBottomSheet = forwardRef<FilterBottomSheetHandle, Props>(
-  ({yearFilter, filter, onApplyPress}, ref) => {
+  ({ yearFilter, filter, onApplyPress }, ref) => {
     const snapPoints = useMemo(() => ['41%'], []);
     const filterCandidate = useRef<OmdbFilter | null>(null);
     const [yearFilterCandidate, setYearFilterCandidate] = useState(1900);
@@ -63,7 +50,8 @@ export const FiltersBottomSheet = forwardRef<FilterBottomSheetHandle, Props>(
         backdropComponent={renderBackdrop}
         detached={true}
         style={$sheetContainer}
-        snapPoints={snapPoints}>
+        snapPoints={snapPoints}
+      >
         <BottomSheetView style={$bottomSheet}>
           <Text text60>Type of Media</Text>
           <Spacer height={Spacings.s3} />
@@ -71,8 +59,9 @@ export const FiltersBottomSheet = forwardRef<FilterBottomSheetHandle, Props>(
             initialValue={filter}
             onValueChange={(value: OmdbFilter) => {
               filterCandidate.current = value;
-            }}>
-            {FILTERS.map(option => (
+            }}
+          >
+            {FILTERS.map((option) => (
               <RadioButton
                 key={option}
                 label={capitalize(option)}
@@ -82,12 +71,10 @@ export const FiltersBottomSheet = forwardRef<FilterBottomSheetHandle, Props>(
             ))}
           </RadioGroup>
           <Spacer height={Spacings.s4} />
-          <Text text60>
-            Year ({yearFilterCandidate === 1900 ? 'All' : yearFilterCandidate})
-          </Text>
+          <Text text60>Year ({yearFilterCandidate === 1900 ? 'All' : yearFilterCandidate})</Text>
           <Slider
             value={yearFilter}
-            onValueChange={value => setYearFilterCandidate(value)}
+            onValueChange={(value) => setYearFilterCandidate(value)}
             minimumValue={1900}
             maximumValue={2024}
             step={1}
@@ -96,10 +83,7 @@ export const FiltersBottomSheet = forwardRef<FilterBottomSheetHandle, Props>(
           <Button
             label="Apply"
             onPress={() => {
-              onApplyPress(
-                yearFilterCandidate,
-                filterCandidate.current || filter,
-              );
+              onApplyPress(yearFilterCandidate, filterCandidate.current || filter);
               filterCandidate.current = null;
             }}
           />

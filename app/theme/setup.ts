@@ -1,5 +1,5 @@
-import {Colors, ThemeManager} from 'react-native-ui-lib';
-import {STANDARD_BORDER_RADIUS} from './constants';
+import { Colors, ThemeManager } from 'react-native-ui-lib'
+import { STANDARD_BORDER_RADIUS } from './constants'
 
 export const setupReactNativeUILibraryTheme = () => {
   Colors.loadDesignTokens({
