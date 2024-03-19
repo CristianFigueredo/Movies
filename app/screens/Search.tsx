@@ -20,8 +20,7 @@ import {
   BottomSheetBackdropProps,
 } from '@gorhom/bottom-sheet';
 import useSearch from '../hooks/useSearch';
-import {OmdbFilter} from '../services/omdb';
-import {DetailsResponse} from '../services/omdb.types';
+import {MediaResponse, OmdbFilter} from '../services/omdb.types';
 import {FlashList} from '@shopify/flash-list';
 import {FullScreenLoader} from '../components/FullScreenLoader';
 import {capitalize} from '../utils/strings';
@@ -68,9 +67,9 @@ export function SearchScreen(): React.JSX.Element {
       ) : (
         <Fragment>
           <Spacer height={Spacings.s3} />
-          <FlashList<DetailsResponse>
+          <FlashList<MediaResponse>
             data={search.results}
-            contentContainerStyle={{paddingBottom: 0, paddingTop: 20}}
+            contentContainerStyle={$mediaList}
             renderItem={({item, index}) => (
               <MediaCard
                 posterURL={item.Poster}
@@ -180,3 +179,5 @@ const $sheetContainer: ViewStyle = {
 const $checkbox: ViewStyle = {
   marginBottom: Spacings.s1,
 };
+
+const $mediaList: ViewStyle = {paddingBottom: 0, paddingTop: 20};

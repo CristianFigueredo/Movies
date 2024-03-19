@@ -6,7 +6,7 @@ export type SearchResponseItem = {
   Poster: string;
 };
 
-export type DetailsResponse = {
+export type MediaResponse = {
   Title: string;
   Year: string;
   Rated: string;
@@ -35,4 +35,13 @@ export type SearchResponse = {
   Search: SearchResponseItem[];
   totalResults: string;
   Response: 'True' | 'False';
+};
+
+export type OmdbFilter = 'movie' | 'series' | 'episode' | 'all';
+
+export type SearchRequestParameters = {
+  query: string;
+  filter: OmdbFilter;
+  page: number;
+  yearFilter?: number;
 };

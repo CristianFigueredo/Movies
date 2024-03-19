@@ -1,12 +1,14 @@
 import {DIContainer} from './http/DIContainer';
 import {IHttpClient} from './http/IHttpClient';
-import {DetailsResponse, SearchResponse} from './omdb.types';
+import {
+  MediaResponse,
+  SearchResponse,
+  SearchRequestParameters,
+} from './omdb.types';
 
-export type OmdbFilter = 'movie' | 'series' | 'episode' | 'all';
-
-class OmdbApiManager {
+class OmdbApiService {
   private httpClient: IHttpClient;
-  private baseURL = 'http://www.omdbapi.com';
+  private baseURL = 'https://www.omdbapi.com';
   // TODO: this key should be stored in a secure place and provided by the user
   private apiKey = 'bfd8ec50'; //'3ff01e53';
 
@@ -14,22 +16,17 @@ class OmdbApiManager {
     this.httpClient = DIContainer.getHttpClient();
   }
 
-  async search(
-    query: string,
-    type: OmdbFilter = 'all',
-    page = 1,
-    yearFilter?: number,
-  ): Promise<SearchResponse> {
+  async search(params: SearchRequestParameters): Promise<SearchResponse> {
     try {
       let url = `${this.baseURL}?apikey=${this.apiKey}&s=${encodeURIComponent(
-        query,
-      )}&page=${page}`;
-      if (type !== 'all') {
-        url += `&type=${type}`;
+        params.query,
+      )}&page=${params.page}`;
+      if (params.filter !== 'all') {
+        url += `&type=${params.filter}`;
       }
 
-      if (yearFilter && yearFilter > 1900) {
-        url += `&y=${yearFilter}`;
+      if (params.yearFilter && params.yearFilter > 1900) {
+        url += `&y=${params.yearFilter}`;
       }
 
       return await this.httpClient.get<SearchResponse>(url);
@@ -39,17 +36,17 @@ class OmdbApiManager {
     }
   }
 
-  async getDetails(imdbID: string): Promise<DetailsResponse> {
+  async getDetails(mediaID: string): Promise<MediaResponse> {
     try {
-      return await this.httpClient.get<DetailsResponse>(
-        `${this.baseURL}/?apikey=${this.apiKey}&i=${imdbID}`,
+      return await this.httpClient.get<MediaResponse>(
+        `${this.baseURL}/?apikey=${this.apiKey}&i=${mediaID}`,
       );
     } catch (error) {
       console.error('Error getting movie details:', error);
       throw error;
     }
   }
-  async getByIDs(ids: string[]): Promise<DetailsResponse[]> {
+  async getByID(ids: string[]): Promise<MediaResponse[]> {
     try {
       const promises = ids.map(id => this.getDetails(id));
       return await Promise.all(promises);
@@ -60,4 +57,4 @@ class OmdbApiManager {
   }
 }
 
-export default new OmdbApiManager();
+export default new OmdbApiService();

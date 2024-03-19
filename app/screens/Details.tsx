@@ -15,13 +15,13 @@ import {Text, Colors, Spacings, Chip, View} from 'react-native-ui-lib';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {IMAGES} from '../../assets';
 import truncate from 'lodash.truncate';
-import {DetailsResponse} from '../services/omdb.types';
+import {MediaResponse} from '../services/omdb.types';
 
 interface Props extends AppStackScreenProps<'Details'> {}
 
 export const DetailsScreen: FunctionComponent<Props> = function () {
   const route = useRoute();
-  const {media} = route.params as {media: DetailsResponse};
+  const {media} = route.params as {media: MediaResponse};
   const navigation = useNavigation();
 
   if (!media) {
@@ -91,7 +91,7 @@ export const DetailsScreen: FunctionComponent<Props> = function () {
             <FlatList
               data={media.Actors.split(', ').map(name => name)}
               horizontal
-              contentContainerStyle={{width: '100%'}}
+              contentContainerStyle={$casts}
               keyExtractor={(item, index) => item + index}
               renderItem={({item: actorName}) => (
                 <View marginR-s6>
@@ -110,10 +110,8 @@ export const DetailsScreen: FunctionComponent<Props> = function () {
 };
 
 const showTrailers = (query: string) => {
-  const url =
-    'https://www.youtube.com/results?search_query=' +
-    encodeURIComponent(query + ' trailer');
-  console.log(url);
+  const encodedQuery = encodeURIComponent(query + ' trailer');
+  const url = 'https://www.youtube.com/results?search_query=' + encodedQuery;
   Linking.openURL(url);
 };
 
@@ -217,3 +215,4 @@ const $closeIconWrapper: ViewStyle = {
   left: 20,
   zIndex: 2,
 };
+const $casts: ViewStyle = {width: '100%'};
