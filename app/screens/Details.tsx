@@ -58,7 +58,7 @@ export const DetailsScreen: FunctionComponent<Props> = function () {
           />
           <View style={$titleAndDetailsContainer}>
             <Text text70M marginB-s3 numberOfLines={3}>
-              {media.Title}
+              {media.Title} ({media.Director})
             </Text>
             <View style={$genres}>
               {media.Genre.split(', ').map((genre, index) => (
@@ -70,6 +70,9 @@ export const DetailsScreen: FunctionComponent<Props> = function () {
                   label={genre}
                 />
               ))}
+              <Chip marginR-s2 size={20} marginB-s1 label={media.imdbRating} />
+              <Chip marginR-s2 size={20} marginB-s1 label={media.Year} />
+              <Chip marginR-s2 size={20} marginB-s1 label={media.Type} />
             </View>
             <Text text80 marginT-s2>
               {media.Runtime}
