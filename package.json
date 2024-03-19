@@ -12,6 +12,7 @@
   "dependencies": {
     "@gorhom/bottom-sheet": "^4",
     "@react-navigation/native": "^6.1.17",
+    "@react-navigation/native-stack": "^6.9.26",
     "@shopify/flash-list": "^1.6.3",
     "@types/lodash.debounce": "^4.0.9",
     "lodash.debounce": "^4.0.8",
