@@ -25,11 +25,13 @@ import {FlashList} from '@shopify/flash-list';
 import {FullScreenLoader} from '../components/FullScreenLoader';
 import {capitalize} from '../utils/strings';
 import {EmptyStateFeedback} from '../components/EmptyStateFeedback';
+import {useNavigation} from '@react-navigation/native';
 
 export function SearchScreen(): React.JSX.Element {
   const filterCandidate = useRef<OmdbFilter | null>(null);
 
   const search = useSearch();
+  const navigation = useNavigation();
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
   const snapPoints = useMemo(() => ['32%'], []);
@@ -74,6 +76,11 @@ export function SearchScreen(): React.JSX.Element {
                 rating={parseFloat(item.imdbRating)}
                 overview={item.Plot}
                 index={index}
+                onPress={() => {
+                  // TODO: fix types
+                  // @ts-ignore
+                  navigation.navigate('Details', {media: item});
+                }}
               />
             )}
             estimatedItemSize={200}
