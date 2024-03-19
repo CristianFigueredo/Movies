@@ -1,13 +1,8 @@
 import {useEffect, useState} from 'react';
-import OmdbApiManager, {OmdbFilter} from '../services/omdb';
-import {DetailsResponse} from '../services/omdb.types';
+import OmdbService from '../services/omdb';
+import {MediaResponse, OmdbFilter} from '../services/omdb.types';
 import _debounce from 'lodash.debounce';
 import {Alert} from 'react-native';
-
-interface SearchResults {
-  totalResults: number;
-  results: DetailsResponse[];
-}
 
 type Parameters = {
   query: string;
@@ -16,15 +11,15 @@ type Parameters = {
   yearFilter?: number;
 };
 
+/*
+ * This hook is responsible for handling the search logic and the state of the search screen.
+ */
 const useSearch = () => {
-  const [searchResults, setSearchResults] = useState<SearchResults>({
-    totalResults: 0,
-    results: [],
-  });
-  const [loading, setLoading] = useState<boolean>(true);
+  const [searchResults, setResults] = useState<MediaResponse[]>([]);
+  const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState('Avengers');
   const [filter, setFilter] = useState<OmdbFilter>('all');
-  const [yearFilter, setYearFilter] = useState<number>(1900);
+  const [yearFilter, setYearFilter] = useState(1900);
   const [page, setPage] = useState(1);
 
   const debouncedSetQuery = _debounce(text => {
@@ -35,28 +30,19 @@ const useSearch = () => {
     getNewResults(text);
   }, 1000);
 
-  const fetchSearchResults = async (params: Parameters) => {
+  const search = async (params: Parameters) => {
     try {
-      const searchResponse = await OmdbApiManager.search(
-        params.query,
-        params.filter,
-        params.page,
-        params.yearFilter,
-      );
-
-      const response = await OmdbApiManager.getByIDs(
+      const searchResponse = await OmdbService.search(params);
+      const response = await OmdbService.getByID(
         searchResponse.Search?.map(item => item.imdbID) || [],
       );
-      setSearchResults(previous => ({
-        totalResults: Number(searchResponse.totalResults),
-        results: Array.from(
-          new Set([...previous.results, ...response.filter(isValidResult)]),
-        ),
-      }));
+
+      setResults(previous =>
+        Array.from(new Set([...previous, ...response.filter(isValidMedia)])),
+      );
 
       setLoading(false);
     } catch (error) {
-      console.log(error);
       Alert.alert(
         'Error',
         'Please check your internet connection or use a different ApiKey (because of the rate limits)',
@@ -66,22 +52,22 @@ const useSearch = () => {
 
   useEffect(() => {
     setLoading(true);
-    fetchSearchResults({query, filter, page, yearFilter});
+    search({query, filter, page, yearFilter});
   }, []);
 
   const getNextPage = () => {
     setPage(page + 1);
-    fetchSearchResults({query, filter, page: page + 1, yearFilter});
+    search({query, filter, page: page + 1, yearFilter});
   };
   const getNewResults = (
     lastQuery?: string,
     lastFilter?: OmdbFilter,
     lastYearFilter?: number,
   ) => {
-    setSearchResults({totalResults: 0, results: []});
+    setResults([]);
     setPage(1);
     setLoading(true);
-    fetchSearchResults({
+    search({
       query: lastQuery || query,
       filter: lastFilter || filter,
       yearFilter: lastYearFilter || yearFilter,
@@ -90,7 +76,7 @@ const useSearch = () => {
   };
 
   return {
-    results: searchResults.results,
+    results: searchResults,
     loading,
     filter,
     yearFilter,
@@ -102,7 +88,7 @@ const useSearch = () => {
   };
 };
 
-const isValidResult = (result: DetailsResponse) => {
+const isValidMedia = (result: MediaResponse) => {
   return (
     result.Poster !== 'N/A' &&
     result.imdbRating !== 'N/A' &&
