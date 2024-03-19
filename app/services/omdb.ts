@@ -18,6 +18,7 @@ class OmdbApiManager {
     query: string,
     type: OmdbFilter = 'all',
     page = 1,
+    yearFilter?: number,
   ): Promise<SearchResponse> {
     try {
       let url = `${this.baseURL}?apikey=${this.apiKey}&s=${encodeURIComponent(
@@ -25,6 +26,10 @@ class OmdbApiManager {
       )}&page=${page}`;
       if (type !== 'all') {
         url += `&type=${type}`;
+      }
+
+      if (yearFilter && yearFilter > 1900) {
+        url += `&y=${yearFilter}`;
       }
 
       return await this.httpClient.get<SearchResponse>(url);

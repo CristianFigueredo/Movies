@@ -13,6 +13,7 @@ type Parameters = {
   query: string;
   filter: OmdbFilter;
   page: number;
+  yearFilter?: number;
 };
 
 const useSearch = () => {
@@ -23,6 +24,7 @@ const useSearch = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [query, setQuery] = useState('Avengers');
   const [filter, setFilter] = useState<OmdbFilter>('all');
+  const [yearFilter, setYearFilter] = useState<number>(1900);
   const [page, setPage] = useState(1);
 
   const debouncedSetQuery = _debounce(text => {
@@ -39,6 +41,7 @@ const useSearch = () => {
         params.query,
         params.filter,
         params.page,
+        params.yearFilter,
       );
 
       const response = await OmdbApiManager.getByIDs(
@@ -63,20 +66,25 @@ const useSearch = () => {
 
   useEffect(() => {
     setLoading(true);
-    fetchSearchResults({query, filter, page});
+    fetchSearchResults({query, filter, page, yearFilter});
   }, []);
 
   const getNextPage = () => {
     setPage(page + 1);
-    fetchSearchResults({query, filter, page: page + 1});
+    fetchSearchResults({query, filter, page: page + 1, yearFilter});
   };
-  const getNewResults = (lastQuery?: string, lastFilter?: OmdbFilter) => {
+  const getNewResults = (
+    lastQuery?: string,
+    lastFilter?: OmdbFilter,
+    lastYearFilter?: number,
+  ) => {
     setSearchResults({totalResults: 0, results: []});
     setPage(1);
     setLoading(true);
     fetchSearchResults({
       query: lastQuery || query,
       filter: lastFilter || filter,
+      yearFilter: lastYearFilter || yearFilter,
       page: 1,
     });
   };
@@ -85,8 +93,10 @@ const useSearch = () => {
     results: searchResults.results,
     loading,
     filter,
+    yearFilter,
     setQuery: debouncedSetQuery,
     setFilter,
+    setYearFilter,
     getNextPage,
     getNewResults,
   };

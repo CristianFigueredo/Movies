@@ -1,4 +1,4 @@
-import React, {Fragment, useCallback, useMemo, useRef} from 'react';
+import React, {Fragment, useCallback, useMemo, useRef, useState} from 'react';
 import {MediaCard} from '../components/MediaCard';
 import {SearchBar} from '../components/SearchBar';
 import Spacer from '../components/Spacer';
@@ -7,6 +7,7 @@ import {
   Colors,
   RadioButton,
   RadioGroup,
+  Slider,
   Spacings,
   Text,
   View,
@@ -29,12 +30,13 @@ import {useNavigation} from '@react-navigation/native';
 
 export function SearchScreen(): React.JSX.Element {
   const filterCandidate = useRef<OmdbFilter | null>(null);
+  const [yearFilterCandidate, setYearFilterCandidate] = useState(1900);
 
   const search = useSearch();
   const navigation = useNavigation();
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
-  const snapPoints = useMemo(() => ['32%'], []);
+  const snapPoints = useMemo(() => ['41%'], []);
 
   const handlePresentModalPress = useCallback(() => {
     Keyboard.dismiss();
@@ -120,14 +122,33 @@ export function SearchScreen(): React.JSX.Element {
                 ))}
               </RadioGroup>
               <Spacer height={Spacings.s4} />
+              <Text text60>
+                Year (
+                {yearFilterCandidate === 1900 ? 'All' : yearFilterCandidate})
+              </Text>
+              <Slider
+                value={search.yearFilter}
+                onValueChange={value => setYearFilterCandidate(value)}
+                minimumValue={1900}
+                maximumValue={2024}
+                step={1}
+              />
+              <Spacer height={Spacings.s4} />
               <Button
                 label="Apply"
                 onPress={() => {
+                  let yearFilter: number | undefined = yearFilterCandidate;
+
+                  search.setYearFilter(yearFilter);
                   if (filterCandidate.current) {
                     search.setFilter(filterCandidate.current);
-                    search.getNewResults(undefined, filterCandidate.current);
-                    filterCandidate.current = null;
                   }
+                  search.getNewResults(
+                    undefined,
+                    filterCandidate.current || undefined,
+                    yearFilter,
+                  );
+                  filterCandidate.current = null;
                   bottomSheetModalRef.current?.dismiss();
                 }}
               />
